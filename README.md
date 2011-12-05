@@ -1,5 +1,7 @@
 # AddressParser
 
+[![Build Status](https://secure.travis-ci.org/ledermann/address_parser.png)](http://travis-ci.org/ledermann/address_parser)
+
 Ruby gem for parsing a (multiline) string containing an address and identifying its parts with Regex. It's useful to copy & paste contact or address informations from unformatted source (e.g. a website) into your schema based database.
 
 **Beware:** This project is in early alpha state and needs a lot of work to be useful. So far it's just a project started on a rainy weekend. I'm not sure about its future.
