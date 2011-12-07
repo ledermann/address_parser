@@ -15,7 +15,8 @@ module AddressParser
     
   private
     def prepare!
-      @plain = @plain.lines.
+      @plain = @plain.to_s.
+                 lines.
                  map(&:strip).                        # Strip spaces from all lines
                  select { |line| line !=~ /\S/ }.     # Remove blank lines
                  join("\n")
@@ -63,7 +64,7 @@ module AddressParser
       # TODO: This is far too simple and needs a lot of work ....
       @plain.gsub!(@company.to_s,'')
       @plain.gsub!(@prefix.to_s,'')
-      first_line = @plain.lines.first
+      first_line = @plain.lines.first.to_s
       words = first_line.split(' ')
       @first_name = words[0]
       @last_name = words[1]

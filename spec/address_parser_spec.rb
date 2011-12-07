@@ -97,6 +97,15 @@ describe AddressParser do
     end
   end
   
+  describe 'blank input' do
+    it 'should not raise error' do
+      lambda {
+        AddressParser::Address.new(nil)
+        AddressParser::Address.new('')
+      }.should_not raise_error
+    end
+  end
+  
   describe 'input' do
     it 'should return original string' do
       input = 'Dr. Peter Müller'
