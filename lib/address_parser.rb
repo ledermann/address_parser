@@ -3,9 +3,10 @@ require 'address_parser/version'
 
 module AddressParser
   class Address
-    attr_reader :prefix, :first_name, :last_name, :company, :street, :zip, :city, :phone, :fax, :web, :email, :country
+    attr_reader :input, :prefix, :first_name, :last_name, :company, :street, :zip, :city, :phone, :fax, :web, :email, :country
     
     def initialize(text)
+      @input = text
       @plain = text
       
       prepare!

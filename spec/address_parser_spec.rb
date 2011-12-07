@@ -97,6 +97,14 @@ describe AddressParser do
     end
   end
   
+  describe 'input' do
+    it 'should return original string' do
+      input = 'Dr. Peter Müller'
+      address = AddressParser::Address.new(input)
+      address.input.should == input
+    end
+  end
+  
   describe 'name and prefix' do
     { 'Peter Meier'                 => [ nil,              'Peter',      'Meier' ],
       'Peter Meier-Müller'          => [ nil,              'Peter',      'Meier-Müller' ],
