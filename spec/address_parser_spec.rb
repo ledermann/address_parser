@@ -14,17 +14,18 @@ describe AddressParser do
         E-Mail mail@peter-meier.de
       EOT
       
-      address.company.should == nil
-      address.first_name.should == 'Peter'
-      address.last_name.should == 'Meier'
-      address.street.should == 'Marienburger Straße 29'
-      address.zip.should == '50374'
-      address.city.should == 'Erftstadt'
-      address.country.should == 'Germany'
-      address.phone.should == '(02235) 123456'
-      address.fax.should == '(02235) 654321'
-      address.web.should == 'www.peter-meier.de'
-      address.email.should == 'mail@peter-meier.de'
+      address.parts.should == {
+        :first_name     => 'Peter',
+        :last_name      => 'Meier',
+        :street         => 'Marienburger Straße 29',
+        :zip            => '50374',
+        :city           => 'Erftstadt',
+        :country        => 'DE',
+        :phone          => '(02235) 123456',
+        :fax            => '(02235) 654321',
+        :web            => 'www.peter-meier.de',
+        :email          => 'mail@peter-meier.de'
+      }
     end
     
     it 'should recognize full address' do
@@ -38,17 +39,16 @@ describe AddressParser do
         Email: info@aundbcomputing.de
       EOT
       
-      address.company.should == 'A&B Computing GmbH'
-      address.first_name.should == nil
-      address.last_name.should == nil
-      address.street.should == 'Schwarzpfeilweg 50'
-      address.zip.should == '72086'
-      address.city.should == 'Blutwurst - Unterburg'
-      address.country.should == 'Germany'
-      address.phone.should == '06132 / 3680-0'
-      address.fax.should == '06132 / 3680-20'
-      address.web.should == nil
-      address.email.should == 'info@aundbcomputing.de'
+      address.parts.should == {
+        :company    => 'A&B Computing GmbH',
+        :street     => 'Schwarzpfeilweg 50',
+        :zip        => '72086',
+        :city       => 'Blutwurst - Unterburg',
+        :country    => 'DE',
+        :phone      => '06132 / 3680-0',
+        :fax        => '06132 / 3680-20',
+        :email      => 'info@aundbcomputing.de'
+      }
     end
     
     it 'should recognize incomplete address' do
@@ -59,18 +59,14 @@ describe AddressParser do
         eva.maier@meier.de
       EOT
       
-      address.company.should == nil
-      address.prefix.should == 'dipl.-ing.'
-      address.first_name.should == 'eva'
-      address.last_name.should == 'meier'
-      address.street.should == nil
-      address.zip.should == nil
-      address.city.should == nil
-      address.country.should == 'Germany'
-      address.phone.should == '+49 241 87528-22'
-      address.fax.should == nil
-      address.web.should == nil
-      address.email.should == 'eva.maier@meier.de'
+      address.parts.should == {
+        :prefix     => 'dipl.-ing.',
+        :first_name => 'eva',
+        :last_name  => 'meier',
+        :country    => 'DE',
+        :phone      => '+49 241 87528-22',
+        :email      => 'eva.maier@meier.de'
+      }
     end
     
     it 'should recognize company address' do
@@ -85,15 +81,18 @@ describe AddressParser do
         e-mail: meier@t-online.de
         internet: www.meier.de
       EOT
-      address.company.should == 'x+y meier ingenieurgesellschaft mbh'
-      address.street.should == 'metzgerstrasse 3'
-      address.zip.should == '52072'
-      address.city.should == 'aachen'
-      address.country.should == 'Germany'
-      address.phone.should == '+49 241 84428-0'
-      address.fax.should == '+49 241 84428-25'
-      address.web.should == 'www.meier.de'
-      address.email.should == 'meier@t-online.de'
+      
+      address.parts.should == {
+        :company => 'x+y meier ingenieurgesellschaft mbh',
+        :street  => 'metzgerstrasse 3',
+        :zip     => '52072',
+        :city    => 'aachen',
+        :country => 'DE',
+        :phone   => '+49 241 84428-0',
+        :fax     => '+49 241 84428-25',
+        :web     => 'www.meier.de',
+        :email   => 'meier@t-online.de'
+      }
     end
   end
   
@@ -126,9 +125,9 @@ describe AddressParser do
     }.each_pair do |sample, expected|
       it "should recognize '#{sample}'" do
         address = AddressParser::Address.new("#{sample}\nfoo\nbar")
-        address.prefix.should == expected[0]
-        address.first_name.should == expected[1]
-        address.last_name.should == expected[2]
+        address.parts[:prefix].should     == expected[0]
+        address.parts[:first_name].should == expected[1]
+        address.parts[:last_name].should  == expected[2]
       end
     end
   end
@@ -142,7 +141,7 @@ describe AddressParser do
       'Platz der Republik 1'
     ].each do |sample|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").street.should == sample
+        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:street].should == sample
       end
     end
   end
@@ -157,8 +156,8 @@ describe AddressParser do
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
         address = AddressParser::Address.new("foo\n#{sample}\nbar")
-        address.zip.should == expected[0]
-        address.city.should == expected[1]
+        address.parts[:zip].should == expected[0]
+        address.parts[:city].should == expected[1]
       end
     end
   end
@@ -169,7 +168,7 @@ describe AddressParser do
       'peter.meier@peter-meier.com'  => 'peter.meier@peter-meier.com'
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").email.should == expected
+        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:email].should == expected
       end
     end
   end
@@ -191,7 +190,7 @@ describe AddressParser do
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
-          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").phone.should == number
+          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:phone].should == number
         end
       end
     end
@@ -203,7 +202,7 @@ describe AddressParser do
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
-          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").fax.should == number
+          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:fax].should == number
         end
       end
     end
@@ -217,7 +216,7 @@ describe AddressParser do
       'www.peter-meier.de'            => 'www.peter-meier.de'
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").web.should == expected
+        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:web].should == expected
       end
     end
   end

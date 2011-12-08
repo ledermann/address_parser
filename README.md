@@ -26,16 +26,19 @@ Add this to your Gemfile:
       Web www.peter-meier.de
       E-Mail mail@peter-meier.de
     EOT
-
-    address.first_name => 'Peter'
-    address.last_name  => 'Meier'
-    address.street     => 'Marienburger Straße 29'
-    address.zip        => '50374'
-    address.city       => 'Erftstadt'
-    address.phone      => '(02235) 123456'
-    address.fax        => '(02235) 654321'
-    address.web        => 'www.peter-meier.de'
-    address.email      => 'mail@peter-meier.de'
+    
+    address.parts.should == {
+      :first_name     => 'Peter',
+      :last_name      => 'Meier',
+      :street         => 'Marienburger Straße 29',
+      :zip            => '50374',
+      :city           => 'Erftstadt',
+      :country        => 'DE',
+      :phone          => '(02235) 123456',
+      :fax            => '(02235) 654321',
+      :web            => 'www.peter-meier.de',
+      :email          => 'mail@peter-meier.de'
+    }
 
 A lot of variants are recognized
 
