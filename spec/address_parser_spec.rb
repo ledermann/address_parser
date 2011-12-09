@@ -3,96 +3,130 @@ require 'spec_helper'
 
 describe AddressParser do
   context 'german address' do
-    it 'should recognize full address' do
-      address = AddressParser::Address.new <<-EOT
-        Peter Meier
-        Marienburger Straße 29
-        50374 Erftstadt
-        Fon (02235) 123456
-        Fax (02235) 654321
-        Web www.peter-meier.de
-        E-Mail mail@peter-meier.de
-      EOT
+    describe 'full address' do
+      it 'should recognize person' do
+        address = AddressParser::Address.new <<-EOT
+          Peter Meier
+          Marienburger Straße 29
+          50374 Erftstadt
+          Fon (02235) 123456
+          Fax (02235) 654321
+          Web www.peter-meier.de
+          E-Mail mail@peter-meier.de
+        EOT
       
-      address.parts.should == {
-        :first_name     => 'Peter',
-        :last_name      => 'Meier',
-        :street         => 'Marienburger Straße 29',
-        :zip            => '50374',
-        :city           => 'Erftstadt',
-        :country        => 'DE',
-        :phone          => '(02235) 123456',
-        :fax            => '(02235) 654321',
-        :web            => 'www.peter-meier.de',
-        :email          => 'mail@peter-meier.de'
-      }
+        address.parts.should == {
+          :first_name     => 'Peter',
+          :last_name      => 'Meier',
+          :street         => 'Marienburger Straße 29',
+          :zip            => '50374',
+          :city           => 'Erftstadt',
+          :country        => 'DE',
+          :phone          => '(02235) 123456',
+          :fax            => '(02235) 654321',
+          :web            => 'www.peter-meier.de',
+          :email          => 'mail@peter-meier.de'
+        }
+      end
+    
+      it 'should recognize company' do
+        address = AddressParser::Address.new <<-EOT
+          A&B Computing GmbH 
+
+          Schwarzpfeilweg 50 
+          72086 Blutwurst - Unterburg
+          Telefon 06132 / 3680-0
+          Telefax 06132 / 3680-20
+          Email: info@aundbcomputing.de
+        EOT
+      
+        address.parts.should == {
+          :company    => 'A&B Computing GmbH',
+          :street     => 'Schwarzpfeilweg 50',
+          :zip        => '72086',
+          :city       => 'Blutwurst - Unterburg',
+          :country    => 'DE',
+          :phone      => '06132 / 3680-0',
+          :fax        => '06132 / 3680-20',
+          :email      => 'info@aundbcomputing.de'
+        }
+      end
     end
     
-    it 'should recognize full address' do
-      address = AddressParser::Address.new <<-EOT
-        A&B Computing GmbH 
+    describe 'incomplete address' do
+      it 'should handle prefix, name, phone, email' do
+        address = AddressParser::Address.new <<-EOT
+          dipl.-ing. eva meier
 
-        Schwarzpfeilweg 50 
-        72086 Blutwurst - Unterburg
-        Telefon 06132 / 3680-0
-        Telefax 06132 / 3680-20
-        Email: info@aundbcomputing.de
-      EOT
+          telefon +49 241 87528-22
+          eva.maier@meier.de
+        EOT
       
-      address.parts.should == {
-        :company    => 'A&B Computing GmbH',
-        :street     => 'Schwarzpfeilweg 50',
-        :zip        => '72086',
-        :city       => 'Blutwurst - Unterburg',
-        :country    => 'DE',
-        :phone      => '06132 / 3680-0',
-        :fax        => '06132 / 3680-20',
-        :email      => 'info@aundbcomputing.de'
-      }
-    end
-    
-    it 'should recognize incomplete address' do
-      address = AddressParser::Address.new <<-EOT
-        dipl.-ing. eva meier
-
-        telefon +49 241 87528-22
-        eva.maier@meier.de
-      EOT
+        address.parts.should == {
+          :prefix     => 'dipl.-ing.',
+          :first_name => 'eva',
+          :last_name  => 'meier',
+          :country    => 'DE',
+          :phone      => '+49 241 87528-22',
+          :email      => 'eva.maier@meier.de'
+        }
+      end
       
-      address.parts.should == {
-        :prefix     => 'dipl.-ing.',
-        :first_name => 'eva',
-        :last_name  => 'meier',
-        :country    => 'DE',
-        :phone      => '+49 241 87528-22',
-        :email      => 'eva.maier@meier.de'
-      }
-    end
-    
-    it 'should recognize company address' do
-      address = AddressParser::Address.new <<-EOT
-        x+y meier ingenieurgesellschaft mbh
-        metzgerstrasse 3
-        52072 aachen / germany
-
-        fon: +49 241 84428-0
-        fax: +49 241 84428-25
-
-        e-mail: meier@t-online.de
-        internet: www.meier.de
-      EOT
+      it 'should handle name, city' do
+        address = AddressParser::Address.new <<-EOT
+          Eva Meier
+          50999 Köln
+        EOT
       
-      address.parts.should == {
-        :company => 'x+y meier ingenieurgesellschaft mbh',
-        :street  => 'metzgerstrasse 3',
-        :zip     => '52072',
-        :city    => 'aachen',
-        :country => 'DE',
-        :phone   => '+49 241 84428-0',
-        :fax     => '+49 241 84428-25',
-        :web     => 'www.meier.de',
-        :email   => 'meier@t-online.de'
-      }
+        address.parts.should == {
+          :first_name => 'Eva',
+          :last_name  => 'Meier',
+          :zip        => '50999',
+          :city       => 'Köln',
+          :country    => 'DE'
+        }
+      end
+      
+      it 'should handle name, street' do
+        address = AddressParser::Address.new <<-EOT
+          Eva Meier
+          Hauptstraße 10
+        EOT
+      
+        address.parts.should == {
+          :first_name => 'Eva',
+          :last_name  => 'Meier',
+          :street     => 'Hauptstraße 10',
+          :country    => 'DE'
+        }
+      end
+      
+      it 'should handle street, zip, city' do
+        address = AddressParser::Address.new <<-EOT
+          Hauptstraße 10
+          50999 Köln
+        EOT
+      
+        address.parts.should == {
+          :street     => 'Hauptstraße 10',
+          :zip        => '50999',
+          :city       => 'Köln',
+          :country    => 'DE'
+        }
+      end
+      
+      it 'should handle phone, e-mail' do
+        address = AddressParser::Address.new <<-EOT
+          Fon 01122/223344
+          info@foo.bar
+        EOT
+      
+        address.parts.should == {
+          :phone      => '01122/223344',
+          :email      => 'info@foo.bar',
+          :country    => 'DE'
+        }
+      end
     end
   end
   

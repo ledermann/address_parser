@@ -22,25 +22,29 @@ module AddressParser
                  select { |line| line !=~ /\S/ }.     # Remove blank lines
                  join("\n")
     end
+    
+    # Remove given string and cleanup again
+    def remove(string)
+      @plain.gsub!(string,'')
+      prepare!
+    end
   
     def parse!
       parse_country
-      parse_company
-      parse_name
-      parse_street
-      parse_city_and_zip
       parse_phone
       parse_fax
       parse_email
       parse_web
+      parse_city_and_zip
+      parse_street
+      parse_company
+      parse_name
     end
 
     def parse_country
       if m = @plain.match(/(Germany|Deutschland)/i)
         @parts[:country] = 'DE'
-        
-        # Remove country name
-        @plain.gsub!(m[1],'')
+        remove(m.to_s)
       end
       
       # For now, always assume german address
@@ -50,6 +54,7 @@ module AddressParser
     def parse_company
       if m = @plain.match(/(^.*(GmbH|mbh|OHG|KG|GbR|AG|UG|haftungsbeschränkt)$)/i)
         @parts[:company] = m[1].strip
+        remove(m.to_s)
       end
     end
       
@@ -71,39 +76,46 @@ module AddressParser
     def parse_street
       if m = @plain.match(/^([a-zäöüÄÖÜß\ \.\-]+?)(\s+)(\d+\ *[a-z]*)/i)
         @parts[:street] = (m[1] + ' ' + m[3]).strip
+        remove(m.to_s)
       end
     end
     
     def parse_city_and_zip
       if m = @plain.match(/(\d{5})\s*([a-züöäÜÖÄß\s\-\.\/\(\)]+?)$/i)
         @parts[:zip] = m[1]
+
         @parts[:city] = m[2]
-        
         @parts[:city].gsub!(/[\/\ ]*$/,'') # Remove some trailing non-word-characters from city
+        
+        remove(m.to_s)
       end
     end
     
     def parse_phone
       if m = @plain.match(/(Fon|Phon|Phone|Tel|Telefon|Telefone|Telephone|Mobil|Mobile|Handy|Cell)[\.:\ ]*([\d\s\+\(\)\/\-\.]+)/i)
         @parts[:phone] = m[2].strip
+        remove(m.to_s)
       end
     end
     
     def parse_fax
       if m = @plain.match(/(Fax|Telefax)[\.:\ ]*([\d\s\+\(\)\/\-\.]+)/i)
         @parts[:fax] = m[2].strip
+        remove(m.to_s)
       end
     end
    
     def parse_email
       if m = @plain.match(/([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})/i)
         @parts[:email] = m[1] + '@' + m[2]
+        remove(m.to_s)
       end
     end
     
     def parse_web
       if m = @plain.match(/(http|https|www)(\S+)/)
         @parts[:web] = "#{m[1]}#{m[2]}"
+        remove(m.to_s)
       end
     end
   end
