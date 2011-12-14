@@ -92,15 +92,15 @@ module AddressParser
     end
     
     def parse_phone
-      if m = @plain.match(/(Fon|Phon|Phone|Tel|Telefon|Telefone|Telephone|Mobil|Mobile|Handy|Cell)[\.:\ ]*([\d\s\+\(\)\/\-\.]+)/i)
-        @parts[:phone] = m[2].strip
+      if m = @plain.match(/(Fon|Phon|Phone|Tel|Telefon|Telefone|Telephone|Mobil|Mobile|Handy|Cell)(nummer|number)?[\.:\s]*([\d\s\+\(\)\/\-\.]+)/i)
+        @parts[:phone] = m[3].strip
         remove(m.to_s)
       end
     end
     
     def parse_fax
-      if m = @plain.match(/(Fax|Telefax)[\.:\ ]*([\d\s\+\(\)\/\-\.]+)/i)
-        @parts[:fax] = m[2].strip
+      if m = @plain.match(/(Fax|Telefax)(nummer|number)?[\.:\ ]*([\d\s\+\(\)\/\-\.]+)/i)
+        @parts[:fax] = m[3].strip
         remove(m.to_s)
       end
     end

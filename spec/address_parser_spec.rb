@@ -220,7 +220,9 @@ describe AddressParser do
       'Tel ',
       'Mobil ',
       'Tel. ',
-      'Telefon: '
+      'Telefon: ',
+      'Telefonnummer:',
+      'Mobilnummer'
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
@@ -232,7 +234,8 @@ describe AddressParser do
   
   describe 'fax' do
     ['Fax ',
-     'Telefax '
+     'Telefax ',
+     'Faxnummer:'
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
