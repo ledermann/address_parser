@@ -66,4 +66,4 @@ There is a commercial alternative named [RecogniContact](http://address-parser.c
 
 ## Copyright
 
-Copyright © 2011 Georg Ledermann. See LICENSE for details.
+Copyright © 2011,2012 [Georg Ledermann](http://georg-ledermann.de). See LICENSE for details.
