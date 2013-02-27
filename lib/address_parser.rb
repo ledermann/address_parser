@@ -74,14 +74,14 @@ module AddressParser
     end
     
     def parse_street
-      if m = @plain.match(/^([a-zäöüÄÖÜß\ \.\-]+?)(\s+)(\d+\ *[a-z]*)/i)
+      if m = @plain.match(/^([a-zäöüÄÖÜß\ \.\-]+?)(\ +)(\d+\ *[a-z]*)/i)
         @parts[:street] = (m[1] + ' ' + m[3]).strip
         remove(m.to_s)
       end
     end
     
     def parse_city_and_zip
-      if m = @plain.match(/(\d{5})\s*([a-züöäÜÖÄß\s\-\.\/\(\)]+?)$/i)
+      if m = @plain.match(/(\d{5})\ *([a-züöäÜÖÄß\ \-\.\/\(\)]+?)$/i)
         @parts[:zip] = m[1]
 
         @parts[:city] = m[2]
