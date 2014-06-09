@@ -15,7 +15,7 @@ describe AddressParser do
           E-Mail mail@peter-meier.de
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :first_name     => 'Peter',
           :last_name      => 'Meier',
           :street         => 'Marienburger Straße 29',
@@ -26,7 +26,7 @@ describe AddressParser do
           :fax            => '(02235) 654321',
           :web            => 'www.peter-meier.de',
           :email          => 'mail@peter-meier.de'
-        }
+        })
       end
     
       it 'should recognize company' do
@@ -40,7 +40,7 @@ describe AddressParser do
           Email: info@aundbcomputing.de
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :company    => 'A&B Computing GmbH',
           :street     => 'Schwarzpfeilweg 50',
           :zip        => '72086',
@@ -49,7 +49,7 @@ describe AddressParser do
           :phone      => '06132 / 3680-0',
           :fax        => '06132 / 3680-20',
           :email      => 'info@aundbcomputing.de'
-        }
+        })
       end
     end
     
@@ -62,14 +62,14 @@ describe AddressParser do
           eva.maier@meier.de
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :prefix     => 'dipl.-ing.',
           :first_name => 'eva',
           :last_name  => 'meier',
           :country    => 'DE',
           :phone      => '+49 241 87528-22',
           :email      => 'eva.maier@meier.de'
-        }
+        })
       end
       
       it 'should handle name, city' do
@@ -78,13 +78,13 @@ describe AddressParser do
           50999 Köln
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :first_name => 'Eva',
           :last_name  => 'Meier',
           :zip        => '50999',
           :city       => 'Köln',
           :country    => 'DE'
-        }
+        })
       end
       
       it 'should handle name, street' do
@@ -93,12 +93,12 @@ describe AddressParser do
           Hauptstraße 10
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :first_name => 'Eva',
           :last_name  => 'Meier',
           :street     => 'Hauptstraße 10',
           :country    => 'DE'
-        }
+        })
       end
       
       it 'should handle street, zip, city' do
@@ -107,12 +107,12 @@ describe AddressParser do
           50999 Köln
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :street     => 'Hauptstraße 10',
           :zip        => '50999',
           :city       => 'Köln',
           :country    => 'DE'
-        }
+        })
       end
       
       it 'should handle phone, e-mail' do
@@ -121,21 +121,21 @@ describe AddressParser do
           info@foo.bar
         EOT
       
-        address.parts.should == {
+        expect(address.parts).to eq({
           :phone      => '01122/223344',
           :email      => 'info@foo.bar',
           :country    => 'DE'
-        }
+        })
       end
     end
   end
   
   describe 'blank input' do
     it 'should not raise error' do
-      lambda {
+      expect {
         AddressParser::Address.new(nil)
         AddressParser::Address.new('')
-      }.should_not raise_error
+      }.not_to raise_error
     end
   end
   
@@ -143,7 +143,7 @@ describe AddressParser do
     it 'should return original string' do
       input = 'Dr. Peter Müller'
       address = AddressParser::Address.new(input)
-      address.input.should == input
+      expect(address.input).to eq(input)
     end
   end
   
@@ -159,9 +159,9 @@ describe AddressParser do
     }.each_pair do |sample, expected|
       it "should recognize '#{sample}'" do
         address = AddressParser::Address.new("#{sample}\nfoo\nbar")
-        address.parts[:prefix].should     == expected[0]
-        address.parts[:first_name].should == expected[1]
-        address.parts[:last_name].should  == expected[2]
+        expect(address.parts[:prefix]).to     eq(expected[0])
+        expect(address.parts[:first_name]).to eq(expected[1])
+        expect(address.parts[:last_name]).to  eq(expected[2])
       end
     end
   end
@@ -175,7 +175,7 @@ describe AddressParser do
       'Platz der Republik 1'
     ].each do |sample|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:street].should == sample
+        expect(AddressParser::Address.new("foo\n#{sample}\nbar").parts[:street]).to eq(sample)
       end
     end
   end
@@ -190,8 +190,8 @@ describe AddressParser do
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
         address = AddressParser::Address.new("foo\n#{sample}\nbar")
-        address.parts[:zip].should == expected[0]
-        address.parts[:city].should == expected[1]
+        expect(address.parts[:zip]).to eq(expected[0])
+        expect(address.parts[:city]).to eq(expected[1])
       end
     end
   end
@@ -202,7 +202,7 @@ describe AddressParser do
       'peter.meier@peter-meier.com'  => 'peter.meier@peter-meier.com'
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:email].should == expected
+        expect(AddressParser::Address.new("foo\n#{sample}\nbar").parts[:email]).to eq(expected)
       end
     end
   end
@@ -226,7 +226,7 @@ describe AddressParser do
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
-          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:phone].should == number
+          expect(AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:phone]).to eq(number)
         end
       end
     end
@@ -239,7 +239,7 @@ describe AddressParser do
     ].each do |prefix|
       PHONE_NUMBERS.each do |number|
         it "should recognize '#{prefix}#{number}'" do
-          AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:fax].should == number
+          expect(AddressParser::Address.new("foo\n#{prefix}#{number}\nbar").parts[:fax]).to eq(number)
         end
       end
     end
@@ -253,7 +253,7 @@ describe AddressParser do
       'www.peter-meier.de'            => 'www.peter-meier.de'
     }.each_pair do |sample,expected|
       it "should recognize '#{sample}'" do
-        AddressParser::Address.new("foo\n#{sample}\nbar").parts[:web].should == expected
+        expect(AddressParser::Address.new("foo\n#{sample}\nbar").parts[:web]).to eq(expected)
       end
     end
   end
