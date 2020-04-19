@@ -11,8 +11,6 @@ Gem::Specification.new do |s|
   s.summary     = %q{Ruby gem for parsing a (multiline) string containing an address and identifying its parts with Regex.}
   s.description = %q{It's useful to copy & paste contact or address informations from unformatted source (e.g. a website) into your schema based database.}
 
-  s.rubyforge_project = 'address_parser'
-
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
